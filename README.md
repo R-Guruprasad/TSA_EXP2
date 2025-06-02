@@ -1,102 +1,50 @@
-### DEVELOPED BY: R Guruprasad
-### REGISTER NO: 212222240033
-### DATE:
-
-# Ex.No: 02 LINEAR AND POLYNOMIAL TREND ESTIMATION
-### AIM:
-To Implement Linear and Polynomial Trend Estiamtion Using Python.
-
-### ALGORITHM:
-
-**Step 1:** Import necessary libraries (NumPy, Matplotlib)
-
-**Step 2:** Load the dataset
-
-**Step 3:** Calculate the linear trend values using lLinearRegression Function.
-
-**Step 4:** Calculate the polynomial trend values using PolynomialFeatures Function.
-
-**Step 5:** End the program
-
-### PROGRAM:
-
-## A - LINEAR TREND ESTIMATION
-
-```python
-# LINEAR TREND ESTIMATION
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Load the data
-data = pd.read_csv('india-gdp.csv',nrows=50)
-data['date'] = pd.to_datetime(data['date'], format='%d-%m-%Y')
-daily_average = data.groupby('date')[' AnnualChange'].mean().reset_index()
+# Load the Tesla Stock dataset
+file_path = '/mnt/data/tsla_2014_2023.csv'
+data = pd.read_csv(file_path)
 
-# Linear trend estimation
-x = np.arange(len(daily_average))  # This should have the same length as daily_average['Revenue']
-y = daily_average[' AnnualChange']
+# Convert 'date' column to datetime and sort the data
+data['date'] = pd.to_datetime(data['date'])
+data.sort_values('date', inplace=True)
 
-linear_coeffs = np.polyfit(x, y, 1)
-linear_trend = np.polyval(linear_coeffs, x)
+# Filter data for a specific range (e.g., 1 year from January 1, 2019, to January 1, 2020)
+start_date = '2019-01-01'
+end_date = '2020-01-01'
+filtered_data = data[(data['date'] >= start_date) & (data['date'] <= end_date)]
 
-# Plotting
-plt.figure(figsize=(14, 7))
-plt.plot(daily_average['date'], daily_average[' AnnualChange'], label='Original Data', marker='o')
-plt.plot(daily_average['date'], linear_trend, label='Linear Trend', color='red')
-plt.title('Linear Trend Estimation')
-plt.xlabel('Year')
-plt.ylabel('Annual % Change')
+# Extract date and close price for the filtered range
+dates = filtered_data['date']
+prices = filtered_data['close']
+
+# Calculate linear trend for the close prices
+coeffs_linear = np.polyfit(np.arange(len(prices)), prices, 1)
+linear_trend = np.polyval(coeffs_linear, np.arange(len(prices)))
+
+# Calculate polynomial trend (degree 2) for the close prices
+coeffs_poly = np.polyfit(np.arange(len(prices)), prices, 2)
+poly_trend = np.polyval(coeffs_poly, np.arange(len(prices)))
+
+# Plotting Linear Trend
+plt.figure(figsize=(12, 6))
+plt.plot(dates, prices, color='blue', alpha=0.3, label='Original Data')  # Use transparency
+plt.plot(dates, linear_trend, color='red', linewidth=2, label='Linear Trend')
+plt.xlabel('Date')
+plt.ylabel('Close Price')
+plt.title('Linear Trend Estimation (Tesla Stock)')
 plt.legend()
-plt.grid()
-plt.xticks(rotation=45)
-plt.tight_layout()
+plt.grid(True)
 plt.show()
-```
 
-## B- POLYNOMIAL TREND ESTIMATION
-```python
-# POLYNOMIAL TREND ESTIMATION
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Load the data
-data = pd.read_csv('india-gdp.csv',nrows=50)
-data['date'] = pd.to_datetime(data['date'], format='%d-%m-%Y')
-daily_average = data.groupby('date')['AnnualChange'].mean().reset_index()
-
-# Polynomial trend estimation (degree 2)
-x = np.arange(len(daily_average))
-y = daily_average['AnnualChange']
-poly_coeffs = np.polyfit(x, y, 2)
-poly_trend = np.polyval(poly_coeffs, x)
-
-# Plotting
-plt.figure(figsize=(14, 7))
-plt.plot(daily_average['date'], daily_average['AnnualChange'], label='Original Data', marker='o')
-plt.plot(daily_average['date'], poly_trend, label='Polynomial Trend (Degree 2)', color='green')
-plt.title('Polynomial Trend Estimation')
-plt.xlabel('Year')
-plt.ylabel('Annual % Change')
+# Plotting Polynomial Trend
+plt.figure(figsize=(12, 6))
+plt.plot(dates, prices, color='blue', alpha=0.3, label='Original Data')  # Use transparency
+plt.plot(dates, poly_trend, color='green', linewidth=2, label='Polynomial Trend (Degree 2)')
+plt.xlabel('Date')
+plt.ylabel('Close Price')
+plt.title('Polynomial Trend Estimation (Tesla Stock)')
 plt.legend()
-plt.grid()
-plt.xticks(rotation=45)
-plt.tight_layout()
+plt.grid(True)
 plt.show()
-```
-### OUTPUT
-
-
-### A - LINEAR TREND ESTIMATION
-
-![Screenshot 2024-09-13 084556](https://github.com/user-attachments/assets/7c637e18-4a58-4210-abc1-21643987e70e)
-
-### B- POLYNOMIAL TREND ESTIMATION
-
-![Screenshot 2024-09-13 084611](https://github.com/user-attachments/assets/3afd24dc-268e-47ff-b741-df03b2f319f3)
-
-### RESULT:
-Thus the python program for linear and Polynomial Trend Estiamtion has been executed successfully.
